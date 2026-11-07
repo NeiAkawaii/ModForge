@@ -13,8 +13,9 @@ public class DllService {
     return m.GetTypes().Where(t => t.Name != "<Module>").Select(t => t.FullName).OrderBy(x => x).ToList();
   }
   public string Decompile(string fullName) {
-    var d = new CSharpDecompiler(DllPath, new DecompilerSettings());
-    return d.DecompileTypeAsString(new FullTypeName(fullName));
+    var settings = new DecompilerSettings { ThrowOnAssemblyResolveErrors = false };
+    var d = new CSharpDecompiler(DllPath, settings);
+    return d.DecompileTypeAsString(new FullTypeName(fullName.Replace('/', '+')));
   }
   public (bool ok, string log, string outPath) Compile(string source, string asmName) {
     var refs = Refs.Select(p => (MetadataReference)MetadataReference.CreateFromFile(p));
